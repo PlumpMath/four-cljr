@@ -176,3 +176,12 @@
 (deftest test-37
   (testing "Regular Expressions"
     (is (= (apply str (re-seq #"[A-Z]+" "bA1B3Ce "))))))
+
+;; 57
+;; Elementary
+;; recursion
+;; A recursion function which calls itself. This is one of the fundamental techniques used in functional programming.
+(deftest test-57
+  (testing "Simple Recursion"
+    (is (= '(5 4 3 2 1)
+           ((fn foo [x] (when (> x 0) (conj (foo (dec x)) x))) 5)))))

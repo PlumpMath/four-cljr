@@ -290,7 +290,101 @@
     (is (= (drop-every-nth [:a :b :c :d :e :f] 2) [:a :c :e]))
     (is (= (drop-every-nth [1 2 3 4 5 6] 4) [1 2 3 5 6]))))
 
+;; 42
+;; Easy
+;; math
+;; Write a function which calculates factorials.
+(deftest test-42
+  (testing "Factorial Fun"
+    (is (= (#(reduce * (range 1 (inc %))) 1) 1))
+    (is (= (#(reduce * (range 1 (inc %))) 3) 6))
+    (is (= (#(reduce * (range 1 (inc %))) 5) 120))
+    (is (= (#(reduce * (range 1 (inc %))) 8) 40320))))
 
+;; 45
+;; Easy
+;; seqs
+;; The iterate function can be used to produce an infinite lazy sequence.
+(deftest test-45
+  (testing "Intro to Iterate"
+    (is '(1 4 7 10 13) (take 5 (iterate #(+ 3 %) 1)))))
+
+;; 47
+;; Easy
+;; The contains? function checks if a KEY is present in a given collection.This often leads beginner clojurians to use it incorrectly with numerically indexed collections like vectors and lists.
+(deftest test-47
+  (testing "Contain Yourself"
+    (is (contains? #{4 5 6} 4))
+    (is (contains? [1 1 1 1 1] 4))
+    (is (contains? {4 :a 2 :b} 4))
+    (is (not (contains? '(1 2 4) 4)))))
+
+;; 48
+;; Easy
+;; The some function takes a predicate function and a collection. It returns the first logical true value of (predicate x) where x is an item in the collection.
+(deftest test-48
+  (testing "Intro to some"
+    (is (= 6 (some #{2 7 6} [5 6 7 8])))
+    (is (= 6 (some #(when (even? %) %) [5 6 7 8])))))
+
+;; 51
+;; Easy
+;; destructuring
+;; Here is an example of some more sophisticated destructuring.
+(deftest test-51
+  (testing "Advanced Destructuring"
+    (is (= [1 2 [3 4 5] [1 2 3 4 5]]
+           (let [[a b & c :as d] (list 1 2 3 4 5)] [a b c d])))))
+
+;; 52
+;; Easy
+;; destructuring
+;; Let bindings and function parameter lists support destructuring
+(deftest test-52
+  (testing "Intro to Destructuring"
+    (is (= [2 4] (let [[a b c d e f g] (range)] [c e])))))
+
+;; 61
+;; Easy
+;; core-functions
+;; Write a function which takes a vector of keys and a vector of values and constructs a map from them.
+(defn map-const
+  [s1 s2]
+  (loop [xs1 s1 xs2 s2 rmp {}]
+    (if (or (empty? xs1) (empty? xs2))
+      rmp
+      (recur (rest xs1) (rest xs2) (assoc rmp (first xs1) (first xs2))))))
+(deftest test-61
+  (testing "Map Construction"
+    (is (= (map-const [:a :b :c] [1 2 3]) {:a 1, :b 2, :c 3}))
+    (is (= (map-const [1 2 3 4] ["one" "two" "three"]) {1 "one", 2 "two", 3 "three"}))
+    (is (= (map-const [:foo :bar] ["foo" "bar" "baz"]) {:foo "foo", :bar "bar"}))))
+
+;; 63
+;; Easy
+;; core-functions
+;; Given a function f and a sequence s, write a function which returns a map. The keys should be the values of f applied to each item in s. The value at each key should be a vector of corresponding items in the order they appear in s.
+;; Special Restrictions: group-by
+(defn group-seq
+  [s1 s2]
+  (loop [ixs s2 rs {}]
+    (if (empty? ixs)
+      rs
+      (recur (rest ixs)
+             (if (contains? rs (s1 (first ixs)))
+               (assoc rs (s1 (first ixs))
+                      (conj (get rs (s1 (first ixs))) (first ixs)))
+               (assoc rs (s1 (first ixs)) [(first ixs)]))))))
+(deftest test-63
+  (testing "Group a Sequence"
+    (is (= (group-seq
+            #(> % 5) [1 3 6 8]) {false [1 3], true [6 8]}))
+    (is (= (group-seq
+            #(apply / %) [[1 2] [2 4] [4 6] [3 6]])
+           {1/2 [[1 2] [2 4] [3 6]], 2/3 [[4 6]]}))
+    (is (= (group-seq
+            count [[1] [1 2] [3] [1 2 3] [2 3]])
+           {1 [[1] [3]], 2 [[1 2] [2 3]], 3 [[1 2 3]]}))))
 
 ;; 173
 ;; Easy

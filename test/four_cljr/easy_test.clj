@@ -219,6 +219,79 @@
     (is (= ((fn [x y] (take-while #(> y %) (iterate inc x))) -2 2) '(-2 -1 0 1)))
     (is (= ((fn [x y] (take-while #(> y %) (iterate inc x))) 5 8) '(5 6 7)))))
 
+;; 38
+;; Easy
+;; core-functions
+;; Write a function which takes a variable number of parameter and returns the maximum value.
+;; Special Restrictions; max max-key
+(defn find-max
+  [& args] 
+  (loop [col (rest args) mx (first args)] 
+    (if (empty? col) 
+      mx 
+      (recur (rest col)
+             (if (> (first col) mx) (first col) mx)))))
+(deftest test-38
+  (testing "Maximum value"
+    (is (= (find-max 1 8 3 4) 8))
+    (is (= (find-max 30 20) 30))
+    (is (= (find-max 45 67 11) 67))))
+
+;; 39
+;; Easy
+;; seqs core-functions
+;; Write a function which takes two sequences and returns the first item from each , then the second item from each, then the third, etc.
+;; Special Restrictions: interleave
+(defn interleave-seq 
+  [c1 c2]
+  (loop [lc1 c1 lc2 c2 rc '()]
+    (if (or (empty? lc1) (empty? lc2))
+      rc
+      (recur (rest lc1) (rest lc2) (concat rc (list (first lc1) (first lc2)))))))
+(deftest test-39
+  (testing "Interleave Two Seqs"
+    (is (= (interleave-seq [1 2 3] [:a :b :c]) '(1 :a 2 :b 3 :c)))
+    (is (= (interleave-seq [1 2] [3 4 5 6]) '(1 3 2 4)))
+    (is (= (interleave-seq [1 2 3 4] [5]) [1 5]))
+    (is (= (interleave-seq [30 20] [25 15]) [30 25 20 15]))))
+
+;; 40
+;; Easy
+;; seqs core-functions
+;; Write a function which separated the items of a sequence by an arbitrary value.
+;; Special Restrictions: interpose
+(defn interpose-seq
+  [sp sq]
+  (loop [isq sq rsq []]
+    (if (empty? isq)
+      (take (+ (count sq) (dec (count sq))) rsq)
+      (recur (rest isq) (conj (conj rsq (first isq)) sp)))))
+(deftest test-40
+  (testing "Interpose a Seq"
+    (is (= (interpose-seq 0 [1 2 3]) [1 0 2 0 3]))
+    (is (= (apply str (interpose-seq ", " ["one" "two" "three"])) "one, two, three"))
+    (is (= (interpose-seq :z [:a :b :c :d]) [:a :z :b :z :c :z :d]))))
+
+;; 41
+;; Easy
+;; seqs
+;; Write a function which drops every Nth item from q sequence.
+(defn drop-every-nth
+  [x i]
+  (loop [xs x n 1 rs [] index i]
+    (if (empty? xs)
+      rs
+      (recur (rest xs)
+             (if (= n index) 1 (inc n))
+             (if (= n index) rs (conj rs (first xs))) index))))
+(deftest test-41
+  (testing "Drop Every Nth Item"
+    (is (= (drop-every-nth [1 2 3 4 5 6 7 8] 3) [1 2 4 5 7 8]))
+    (is (= (drop-every-nth [:a :b :c :d :e :f] 2) [:a :c :e]))
+    (is (= (drop-every-nth [1 2 3 4 5 6] 4) [1 2 3 5 6]))))
+
+
+
 ;; 173
 ;; Easy
 ;; Sequential destructuring allows you to bind symbols to parts of sequential things (vectors, lists, seqs, etc.)

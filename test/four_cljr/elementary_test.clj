@@ -148,3 +148,31 @@
 (deftest test-18
   (testing "Sequences: filter"
     (is (= '(6 7) (filter #(> % 5) '(3 4 5 6 7))))))
+
+;; 35
+;; Elementary
+;; syntax
+;; Clojure lets you give local names to values using the special let-form.
+(deftest test-35
+  (testing "Local bindings"
+    (is (= 7 (let [x 5] (+ 2 x))))
+    (is (= 7 (let [x 3, y 10] (- y x))))
+    (is (= 7 (let [x 21] (let [y 3] (/ x y)))))))
+
+;; 36
+;; Elementary
+;; math syntax
+;; Can you bind x, y, and z so that these are all true?
+(deftest test-36
+  (testing "Let it Be"
+    (is (= 10 (let [x 7 y 3 z 1] (+ x y))))
+    (is (= 4 (let [x 7 y 3 z 1] (+ y z))))
+    (is (= 1 (let [x 7 y 3 z 1] z)))))
+
+;; 37
+;; Elementary
+;; regex syntax
+;; Regex patterns are supported with a speial reader macro.
+(deftest test-37
+  (testing "Regular Expressions"
+    (is (= (apply str (re-seq #"[A-Z]+" "bA1B3Ce "))))))

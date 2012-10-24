@@ -185,3 +185,112 @@
   (testing "Simple Recursion"
     (is (= '(5 4 3 2 1)
            ((fn foo [x] (when (> x 0) (conj (foo (dec x)) x))) 5)))))
+
+;; 64
+;; Elementary
+;; seqs
+;; Reduce takes a 2 argument function and an optional starting value. It then applies the function to the first 2 items in the sequence (or the starting value and the first element of the sequence). In the next iteration the function will be called on the previous return value and the next item from the sequence, thus reducing the entire collection to one value. Don't worry, it's not as complicated as it sounds.
+(deftest test-64
+  (testing "Intro to Reduce"
+    (is (= 15 (reduce + [1 2 3 4 5])))
+    (is (=  0 (reduce + [])))
+    (is (=  6 (reduce + 1 [2 3])))))
+
+;; 68
+;; Elementary
+;; recursion
+;; Clojure only has one non-stack-consuming looping construct: recur. Either a function or a loop can be used as the recursion point. Either way, recur rebinds the bindings of the recursion point to the values it is passed. Recur must be called from the tail-position, and calling it elsewhere will result in an error.
+(deftest test-68
+  (testing "Recurring Theme"
+    (is (= [7 6 5 4 3]
+           (loop [x 5
+                  result []]
+             (if (> x 0)
+               (recur (dec x) (conj result (+ 2 x)))
+               result))))))
+
+;; 71
+;; Elementary
+;; The -> macro threads an expression x through a variable number of forms. First, x is inserted as the second item in the first form, making a list of it if it is not a list already. Then the first form is inserted as the second item in the second form, making a list of that form if necessary. This process continues for all the forms. Using -> can sometimes make your code more readable.
+(deftest test-71
+  (testing "Rearranging Code: ->"
+    (is (= (last (sort (rest (reverse [2 5 4 1 3 6]))))
+           (-> [2 5 4 1 3 6] reverse rest sort last) 5))))
+
+;; 72
+;; Elementary
+;; The ->> macro threads an expression x through a variable number of forms. First, x is inserted as the last item in the first form, making a list of it if it is not a list already. Then the first form is inserted as the last item in the second form, making a list of that form if necessary. This process continues for all the forms. Using ->> can sometimes make your code more readable.
+(deftest test-72
+  (testing "Rearranging Code: ->>"
+    (is (= (#(reduce + %) (map inc (take 3 (drop 2 [2 5 4 1 3 6]))))
+           (->> [2 5 4 1 3 6] (drop 2) (take 3) (map inc) (#(reduce + %)))
+           11))))
+
+;; 134
+;; Elementary
+;; maps
+;; Write a function which, given a key and map, returns true iff the map contains an entry with that key and its value is nil.
+(deftest test-134
+  (testing "A nil key"
+    (is (true?  (#(and (contains? %2 %1) (nil? (%1 %2))) :a {:a nil :b 2})))
+    (is (false? (#(and (contains? %2 %1) (nil? (%1 %2))) :b {:a nil :b 2})))
+    (is (false? (#(and (contains? %2 %1) (nil? (%1 %2))) :c {:a nil :b 2})))))
+
+;; 145
+;; Elementary
+;; core-functions seqs
+;; Clojure's for macro is a tremendously versatile mechanism for producing a sequence based on some other sequence(s). It can take some time to understand how to use it properly, but that investment will be paid back with clear, concise sequence-wrangling later. With that in mind, read over these for expressions and try to see how each of them produces the same result.
+(deftest test-145
+  (testing "For the win"
+    (is (= '(1 5 9 13 17 21 25 29 33 37) (for [x (range 40)
+                                               :when (= 1 (rem x 4))]
+                                           x)))
+    (is (= '(1 5 9 13 17 21 25 29 33 37) (for [x (iterate #(+ 4 %) 0)
+                                               :let [z (inc x)]
+                                               :while (< z 40)]
+                                           z)))
+    (is (= '(1 5 9 13 17 21 25 29 33 37) (for [[x y] (partition 2 (range 20))]
+                                           (+ x y))))))
+
+;; 156
+;; Elementary
+;; seqs
+;; When retrieving values from a map, you can specify default values in case the key is not found:
+;; (= 2 (:foo {:bar 0, :baz 1} 2))
+;; However, what if you want the map itself to contain the default values? Write a function which takes a default value and a sequence of keys and constructs a map.
+(defn map-defaults
+  [dv arr]
+  (loop [rm {} keys arr]
+    (if (empty? keys)
+      rm
+      (recur (assoc rm (first keys) dv) (rest keys)))))
+(deftest test-156
+  (testing "Map Defaults"
+    (is (= (map-defaults 0 [:a :b :c]) {:a 0 :b 0 :c 0}))
+    (is (= (map-defaults "x" [1 2 3]) {1 "x" 2 "x" 3 "x"}))
+    (is (= (map-defaults [:a :b] [:foo :bar]) {:foo [:a :b] :bar [:a :b]}))))
+
+;; 161
+;; Elementary
+;; set-theory
+;; Set A is a subset of set B, or equivalently B is a superset of A, if A is "contained" inside B. A and B may coincide.
+(deftest test-161
+  (testing "Subset and Superset"
+    (is (clojure.set/superset? #{1 2} #{2}))
+    (is (clojure.set/subset? #{1} #{1 2}))
+    (is (clojure.set/superset? #{1 2} #{1 2}))
+    (is (clojure.set/subset? #{1 2} #{1 2}))))
+
+;; 162
+;; Elementary
+;; logic
+;; In Clojure, only nil and false representing the values of logical falsity in conditional tests - anything else is logical truth.
+(deftest test-162
+  (testing "Logical fasity and truth"
+    (is (= 1 (if-not false 1 0)))
+    (is (= 1 (if-not nil 1 0)))
+    (is (= 1 (if true 1 0)))
+    (is (= 1 (if [] 1 0)))
+    (is (= 1 (if [0] 1 0)))
+    (is (= 1 (if 0 1 0)))
+    (is (= 1 (if 1 1 0)))))

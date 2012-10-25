@@ -294,3 +294,23 @@
     (is (= 1 (if [0] 1 0)))
     (is (= 1 (if 0 1 0)))
     (is (= 1 (if 1 1 0)))))
+
+;; 166
+;; Elementary
+;; For any orderable data type it's possible to derive all of the basic comparison operations (<,=<, =, !=, >=, and >) from a single operation (any operator but = or != will work). Write a function that takes three arguments, a less than operator for the data and two items to compare. The function should return a keyword describing the relationship between the two items. The keywords for the relationship between x and y are as follows:
+;; x = y  :eq
+;; x > y  :gt
+;; x < y  :lt
+(defn cmparisions
+  [lt x y]
+  (cond
+    (lt x y) :lt
+    (lt y x) :gt
+    :else :eq))
+
+(deftest test-166
+  (testing "Comparisons"
+    (is (= :gt (cmparisions < 5 1)))
+    (is (= :eq (cmparisions (fn [x y] (< (count x) (count y))) "pear" "plum")))
+    (is (= :lt (cmparisions (fn [x y] (< (mod x 5) (mod y 5))) 21 3)))
+    (is (= :gt (cmparisions > 0 2)))))

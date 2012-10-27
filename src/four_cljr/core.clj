@@ -29,3 +29,11 @@
     (if (empty? isq)
       (take (+ (count sq) (dec (count sq))) rsq)
       (recur (rest isq) (conj (conj rsq (first isq)) sp)))))
+
+(defn primefactors 
+  ([n] 
+    (primefactors n 2 '()))
+  ([n candidate acc]
+    (cond (<= n 1) (reverse acc)
+          (zero? (rem n candidate)) (recur (/ n candidate) candidate (cons candidate acc))
+          :else (recur n (inc candidate) acc))))

@@ -173,11 +173,21 @@
 ;; Easy
 ;; seqs
 ;; Write a function which packs consecutive duplicates into sub-lists.
-;;(deftest test-31
-;;  (testing "Pack a Sequence"
-;;    (is (= (__ [1 1 2 1 1 1 3 3]) '((1 1) (2) (1 1 1) (3 3))))
-;;    (is (= (__ [:a :a :b :b :c]) '((:a :a) (:b :b) (:c))))
-;;    (is (= (__ [[1 2] [1 2] [3 4]]) '(([1 2] [1 2]) ([3 4]))))))
+(defn pack-seq [xs]
+  (loop [x xs r '()]
+    (if (empty? x)
+      (reverse r)
+      (recur (rest x) (if (= (first x) (-> r first first))
+                        (cons (cons (first x) (first r)) (rest r))
+                        (cons (cons (first x) '()) r))))))
+(deftest test-31
+  (testing "Pack a Sequence"
+    (is (= ((partial partition-by identity)
+            [1 1 2 1 1 1 3 3]) '((1 1) (2) (1 1 1) (3 3))))
+    (is (= ((partial partition-by identity)
+            [:a :a :b :b :c]) '((:a :a) (:b :b) (:c))))
+    (is (= ((partial partition-by identity)
+            [[1 2] [1 2] [3 4]]) '(([1 2] [1 2]) ([3 4]))))))
 
 ;; 32
 ;; Easy
@@ -327,6 +337,20 @@
     (is (= 6 (some #{2 7 6} [5 6 7 8])))
     (is (= 6 (some #(when (even? %) %) [5 6 7 8])))))
 
+;; 49
+;; Easy
+;; seqs core-functions
+;; Special Restrictions: split-at
+;; Write a function which will split a sequence into two parts.
+(defn split-seq 
+  [n xs] 
+  [(take n xs) (drop n xs)])
+(deftest test-49
+  (testing "Split a sequence"
+    (is (= (split-seq 3 [1 2 3 4 5 6]) [[1 2 3] [4 5 6]]))
+    (is (= (split-seq 1 [:a :b :c :d]) [[:a] [:b :c :d]]))
+    (is (= (split-seq 2 [[1 2] [3 4] [5 6]]) [[[1 2] [3 4]] [[5 6]]]))))
+
 ;; 51
 ;; Easy
 ;; destructuring
@@ -360,6 +384,20 @@
     (is (= (map-const [1 2 3 4] ["one" "two" "three"]) {1 "one", 2 "two", 3 "three"}))
     (is (= (map-const [:foo :bar] ["foo" "bar" "baz"]) {:foo "foo", :bar "bar"}))))
 
+;; 62
+;; Easy
+;; seqs core-functions
+;; Given a side-effect free function f and an initial value x write a function which returns an infinite lazy sequence of x, (f x), (f (f x)), (f (f (f x))), etc.
+;; Special Restrictions: iterate
+(defn iter-ate
+  [f x]
+  (cons x (lazy-seq (iter-ate f (f x)))))
+(deftest test-62
+  (testing "Re-implement Iterate"
+    (is (= (take 5 (iter-ate #(* 2 %) 1)) [1 2 4 8 16]))
+    (is (= (take 100 (iter-ate inc 0)) (take 100 (range))))
+    (is (= (take 9 (iter-ate #(inc (mod % 3)) 1)) (take 9 (cycle [1 2 3]))))))
+
 ;; 63
 ;; Easy
 ;; core-functions
@@ -385,6 +423,149 @@
     (is (= (group-seq
             count [[1] [1 2] [3] [1 2 3] [2 3]])
            {1 [[1] [3]], 2 [[1 2] [2 3]], 3 [[1 2 3]]}))))
+
+;; 66
+;; Easy
+;; Given two integers, write a function which returns the greatest common divisor.
+(defn gcd
+  [a b]
+  (if (zero? b)
+    a
+    (recur b (mod a b))))
+(deftest test-66
+  (testing "Greatest Common Divisor"
+    (is (= (gcd 2 4) 2))
+    (is (= (gcd 10 5) 5))
+    (is (= (gcd 5 7) 1))
+    (is (= (gcd 1023 858) 33))))
+
+;; 81
+;; Easy
+;; set-theory
+;; Write a function which returns the interection of two sets. The intersection is the sub-set of items that each set has in common.
+;; Special Restrictions: intersection
+(defn inter-section [s1 s2]
+  (apply disj s1 (clojure.set/difference s1 s2)))
+(deftest test-81
+  (testing "Set Intersection"
+    (is (= (inter-section #{0 1 2 3} #{2 3 4 5}) #{2 3}))
+    (is (= (inter-section #{0 1 2} #{3 4 5}) #{}))
+    (is (= (inter-section #{:a :b :c :d} #{:c :e :a :f :d}) #{:a :c :d}))))
+
+;; 83
+;; Easy
+;; Write a function which takes a variable number of booleans. Your function should return true if some of the parameters are true, but not all of the parameters are true. Otherwise your function should return false.
+(defn half-truth
+  [& xs]
+  (and
+   (not (every? identity xs))
+   (boolean (some identity xs))))
+(deftest test-83
+  (testing "A Half-Truth"
+    (is (= false (half-truth false false)))
+    (is (= true (half-truth true false)))
+    (is (= false (half-truth true)))
+    (is (= true (half-truth false true false)))
+    (is (= false (half-truth true true true)))
+    (is (= true (half-truth true true true false)))))
+
+;; 99
+;; Easy
+;; math seqs
+;; Write a function which multiplies two numbers and return the result as a sequence of its digits
+(defn product-digits
+  [& more]
+  (map #(Integer/valueOf (.toString %))
+       (seq (.toString (apply * more)))))
+(deftest test-99
+  (testing "Product digits"
+    (is (= (product-digits 1 1) [1]))
+    (is (= (product-digits 99 9) [8 9 1]))
+    (is (= (product-digits 999 99) [9 8 9 0 1]))))
+
+;; 100
+;; Easy
+;; math
+;; Write a function which calculates the least common multiple. Your function should accept a variable number of positive integers or ratios.
+(defn lcm
+  [& xs]
+  (reduce (fn [a b]
+            (/ (* a b) ((fn [x y]
+                          (if (zero? y)
+                            x
+                            (recur y (mod x y)))) a b))) xs))
+(deftest test-100
+  (testing "Least common multiple"
+    (is (== (lcm 2 3) 6))
+    (is (== (lcm 5 3 7) 105))
+    (is (== (lcm 1/3 2/5) 2))
+    (is (== (lcm 3/4 1/6) 3/2))
+    (is (== (lcm 7 5/7 2 3/5) 210))))
+
+;; 107
+;; Easy
+;; higher-order-functions math
+;; Lexical scope and first-class functions are two of the most basic building blocks of a functional language like Clojure. When you combine the two together, you get something very powerful called lexical closures. With these, you can exercise a great deal of control over the lifetime of your local bindings, saving their values for use later, long after the code you're running now has finished.
+
+;; It can be hard to follow in the abstract, so let's build a simple closure. Given a positive integer n, return a function (f x) which computes xn. Observe that the effect of this is to preserve the value of n for use outside the scope in which it is defined.
+(defn simple-closure
+  [n]
+  (fn [x]
+    (reduce *(take n (repeat x)))))
+(deftest test-107
+  (testing "Simple closures"
+    (is (= 256 ((simple-closure 2) 16) ((simple-closure 8) 2)))
+    (is (= [1 8 27 64] (map (simple-closure 3) [1 2 3 4])))      
+    (is (= [1 2 4 8 16] (map #((simple-closure %) 2) [0 1 2 3 4])))))
+
+;; 120
+;; Easy
+;; math
+;; Write a function which takes a collection of integers as an argument. Return the count of how many elements are smaller than the sum of their squared component digits. For example: 10 is larger than 1 squared plus 0 squared; whereas 15 is smaller than 1 squared plus 5 squared.
+(defn sum-sq-digits
+  [iseq]
+  (loop [numrs (take 100 iseq) cnt 0]
+    (if (empty? numrs)
+      cnt
+      (recur (rest numrs)
+             (if (< (first numrs)
+                    (apply + (map #(* % %) (map #(Integer/valueOf (.toString %))
+                                                (seq (.toString (first numrs)))))))
+               (inc cnt)
+               cnt)))))
+(deftest test-120
+  (testing "Sum of square of digits"
+    (is (= 8 (sum-sq-digits (range 10))))
+    (is (= 19 (sum-sq-digits (range 30))))
+    (is (= 50 (sum-sq-digits (range 100))))
+    (is (= 50 (sum-sq-digits (range 1000))))))
+
+;; 135
+;; Easy
+;; higher-order-functions math
+;; Your friend Joe is always whining about Lisps using the prefix notation for math. Show him how you could easily write a function that does math using the infix notation. Is your favorite language that flexible, Joe? Write a function that accepts a variable length mathematical expression consisting of numbers and the operations +, -, *, and /. Assume a simple calculator that does not do precedence and instead just calculates left to right.
+(defn infix-cal
+  [x op & xs]
+  (if (empty? xs)
+    x
+    (recur (op x (first xs)) (second xs) (-> xs rest rest))))
+(deftest test-135
+  (testing "Infix Calculator"
+    (is (= 7  (infix-cal 2 + 5)))
+    (is (= 42 (infix-cal 38 + 48 - 2 / 2)))
+    (is (= 8  (infix-cal 10 / 2 - 1 * 2)))
+    (is (= 72 (infix-cal 20 / 2 + 2 + 4 + 8 - 6 - 10 * 9)))))
+
+;; 143
+;; Easy
+;; seqs math
+;; Create a function that computes the dot product of two sequences. You may assume that the vectors will have the same length.
+(deftest test-143
+  (testing "dot product"
+    (is (= 0 (#(apply + (map * %1 %2)) [0 1 0] [1 0 0])))
+    (is (= 3 (#(apply + (map * %1 %2)) [1 1 1] [1 1 1])))
+    (is (= 32 (#(apply + (map * %1 %2)) [1 2 3] [4 5 6])))
+    (is (= 256 (#(apply + (map * %1 %2)) [2 5 6] [100 10 1])))))
 
 ;; 173
 ;; Easy

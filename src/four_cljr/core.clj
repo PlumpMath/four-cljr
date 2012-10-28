@@ -5,7 +5,10 @@
   [x]
   (println x "Hello, World!"))
 
-
+;; alternate solution to problem-1 is
+;; (reduce + (filter #(or (zero? (mod % 3)) (zero? (mod % 5))) (range 1000)))
+;; with profiler
+;; (time (reduce + (filter #(or (zero? (mod % 3)) (zero? (mod % 5))) (range 1000))))
 (defn problem-1 []
   (loop [iseq (range 1000) tsum 0]
     (if (empty? iseq)

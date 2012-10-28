@@ -469,6 +469,24 @@
     (is (= false (half-truth true true true)))
     (is (= true (half-truth true true true false)))))
 
+;; 90
+;; Easy
+;; set-theory
+;; Write a function which calculates the Cartesian product of two sets.
+(defn cart-prod
+  [x1 x2]
+  (set (for [x x1 y x2] [x y])))
+(deftest test-90
+  (testing "Cartesian Product"
+    (is (= (cart-prod #{"ace" "king" "queen"} #{"♠" "♥" "♦" "♣"})
+           #{["ace"   "♠"] ["ace"   "♥"] ["ace"   "♦"] ["ace"   "♣"]
+             ["king"  "♠"] ["king"  "♥"] ["king"  "♦"] ["king"  "♣"]
+             ["queen" "♠"] ["queen" "♥"] ["queen" "♦"] ["queen" "♣"]}))
+    (is (= (cart-prod #{1 2 3} #{4 5})
+           #{[1 4] [2 4] [3 4] [1 5] [2 5] [3 5]}))
+    (is (= 300 (count (cart-prod (into #{} (range 10))
+                                 (into #{} (range 30))))))))
+
 ;; 99
 ;; Easy
 ;; math seqs

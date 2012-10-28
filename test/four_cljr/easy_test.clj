@@ -469,6 +469,23 @@
     (is (= false (half-truth true true true)))
     (is (= true (half-truth true true true false)))))
 
+;; 88
+;; Easy
+;; set-theory
+;; Write a function which returns the symmetric difference of two sets. The symmetric difference is the set of items belonging to one but not both of the two sets.
+(defn symm-diff
+  [s1 s2]
+  (clojure.set/union
+   (clojure.set/difference s1 s2)
+   (clojure.set/difference s2 s1)))
+(deftest test-88
+  (testing "Symmetric Difference"
+    (is (= (symm-diff #{1 2 3 4 5 6} #{1 3 5 7}) #{2 4 6 7}))
+    (is (= (symm-diff #{:a :b :c} #{}) #{:a :b :c}))
+    (is (= (symm-diff #{} #{4 5 6}) #{4 5 6}))
+    (is (= (symm-diff #{[1 2] [2 3]} #{[2 3] [3 4]}) #{[1 2] [3 4]}))))
+
+
 ;; 90
 ;; Easy
 ;; set-theory

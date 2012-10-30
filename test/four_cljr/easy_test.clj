@@ -575,6 +575,19 @@
     (is (= 50 (sum-sq-digits (range 100))))
     (is (= 50 (sum-sq-digits (range 1000))))))
 
+;; 122
+;; Easy
+;; Convert a binary number, provided in the form of a string, to its numerical value.
+(deftest test-122
+  (testing "Read a binary number"
+    (is (= 0 (#(Integer/parseInt % 2) "0")))
+    (is (= 7 (#(Integer/parseInt % 2) "111")))
+    (is (= 8 (#(Integer/parseInt % 2) "1000")))
+    (is (= 9 (#(Integer/parseInt % 2) "1001")))
+    (is (= 255 (#(Integer/parseInt % 2) "11111111")))
+    (is (= 1365 (#(Integer/parseInt % 2) "10101010101")))
+    (is (= 65535 (#(Integer/parseInt % 2) "1111111111111111")))))
+
 ;; 135
 ;; Easy
 ;; higher-order-functions math

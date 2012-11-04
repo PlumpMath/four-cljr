@@ -625,6 +625,21 @@
     (is (= 32 (#(apply + (map * %1 %2)) [1 2 3] [4 5 6])))
     (is (= 256 (#(apply + (map * %1 %2)) [2 5 6] [100 10 1])))))
 
+;; 157
+;; Easy
+;; seqs
+;; Transform a sequence into a sequence of pairs containing the original element along with their index.
+(defn index-seq [xs]
+  (loop [s xs rs [] cnt 0]
+    (if (empty? s)
+      rs
+      (recur (rest s) (conj rs [(first s) cnt]) (inc cnt)))))
+(deftest test-157
+  (testing "Indexing Sequences"
+    (is (= (#(map list % (range)) [:a :b :c]) [[:a 0] [:b 1] [:c 2]]))
+    (is (= (#(map list % (range)) [0 1 3]) '((0 0) (1 1) (3 2))))
+    (is (= (#(map list % (range)) [[:foo] {:bar :baz}]) [[[:foo] 0] [{:bar :baz} 1]]))))
+
 ;; 173
 ;; Easy
 ;; Sequential destructuring allows you to bind symbols to parts of sequential things (vectors, lists, seqs, etc.)

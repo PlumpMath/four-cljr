@@ -588,6 +588,16 @@
     (is (= 1365 (#(Integer/parseInt % 2) "10101010101")))
     (is (= 65535 (#(Integer/parseInt % 2) "1111111111111111")))))
 
+;; 126
+;; Easy
+;; fun brain-teaser
+;; Enter a value which satisfies the following:
+(deftest test-126
+  (testing "Through the Looking Class"
+    (let [x Class]
+      (and (= (class x) x) x))))
+
+
 ;; 135
 ;; Easy
 ;; higher-order-functions math

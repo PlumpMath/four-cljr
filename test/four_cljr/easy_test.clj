@@ -504,6 +504,28 @@
     (is (= 300 (count (cart-prod (into #{} (range 10))
                                  (into #{} (range 30))))))))
 
+;; 95
+;; Easy
+;; trees
+;; Write a predicate which checks whether or not a given sequence represents a binary tree. Each node in the tree must have a value, a left child, and a right child.
+
+(defn binary-tree?
+  [x]
+  (or (= x nil)
+      (and (coll? x)
+	   (= (count x) 3)
+	   (every? binary-tree? (rest x)))))
+(deftest test-95
+  (testing "To Tree, or not to Tree"
+    (is (= (binary-tree? '(:a (:b nil nil) nil)) true))
+    (is (= (binary-tree? '(:a (:b nil nil))) false))
+    (is (= (binary-tree? [1 nil [2 [3 nil nil] [4 nil nil]]]) true))
+    (is (= (binary-tree? [1 [2 nil nil] [3 nil nil] [4 nil nil]]) false))
+    (is (= (binary-tree? [1 [2 [3 [4 nil nil] nil] nil] nil]) true))
+    (is (= (binary-tree? [1 [2 [3 [4 false nil] nil] nil] nil]) false))
+    (is (= (binary-tree? '(:a nil ())) false))))
+
+
 ;; 97
 ;; Easy
 ;; Pascal's triangle is a triangle of numbers computed using the following rules:

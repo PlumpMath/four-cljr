@@ -504,6 +504,31 @@
     (is (= 300 (count (cart-prod (into #{} (range 10))
                                  (into #{} (range 30))))))))
 
+;; 97
+;; Easy
+;; Pascal's triangle is a triangle of numbers computed using the following rules:
+;; - The first row is 1.
+;; - Each successive row is computed by adding together adjacent numbers in the row above, and adding a 1 to the beginning and end of the row.
+
+;; Write a function which returns the nth row of Pascal's Triangle.
+(defn pascal-triangle
+  [n]
+  (loop [i 1 rvec [[1]]]
+    (if (= i n)
+      (get rvec (dec n))
+      (recur (inc i) (conj rvec (vec (map + (conj (last rvec) 0) (cons 0 (last rvec)))))))))
+(deftest test-97
+  (testing "Pascal's Triangle"
+    (is (= (pascal-triangle 1) [1]))
+    (is (= (map pascal-triangle (range 1 6))
+           [[1]
+            [1 1]
+            [1 2 1]
+            [1 3 3 1]
+            [1 4 6 4 1]]))
+    (is (= (pascal-triangle 11)
+           [1 10 45 120 210 252 210 120 45 10 1]))))
+
 ;; 99
 ;; Easy
 ;; math seqs
@@ -624,6 +649,25 @@
     (is (= 3 (#(apply + (map * %1 %2)) [1 1 1] [1 1 1])))
     (is (= 32 (#(apply + (map * %1 %2)) [1 2 3] [4 5 6])))
     (is (= 256 (#(apply + (map * %1 %2)) [2 5 6] [100 10 1])))))
+
+;; 147
+;; Easy
+;; seqs
+;; Write a function that, for any given input vector of numbers, returns an infinite lazy sequence of vectors, where each next one is constructed from the previous following the rules used in Pascal's Triangle. For example, for [3 1 2], the next row is [3 4 3 2].
+(defn pascal-trapezoid
+  [n]
+  (lazy-seq 
+   (cons n 
+         (pascal-trapezoid
+          (let [a (conj n 0)
+            b (vec (cons 0 n))]
+            			(vec (map +' a b)))))))
+(deftest test-147
+  (testing "Pascal's Trapezoid"
+    (is (= (= (second (pascal-trapezoid [2 3 2])) [2 5 5 2])))
+	(is (= (take 5 (pascal-trapezoid [1])) [[1] [1 1] [1 2 1] [1 3 3 1] [1 4 6 4 1]]))
+	(is (= (take 2 (pascal-trapezoid [3 1 2])) [[3 1 2] [3 4 3 2]]))
+	(is (= (take 100 (pascal-trapezoid [2 4 2])) (rest (take 101 (pascal-trapezoid [2 2])))))))
 
 ;; 157
 ;; Easy

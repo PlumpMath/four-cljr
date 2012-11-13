@@ -600,6 +600,22 @@
     (is (= [1 8 27 64] (map (simple-closure 3) [1 2 3 4])))      
     (is (= [1 2 4 8 16] (map #((simple-closure %) 2) [0 1 2 3 4])))))
 
+;; 118
+;; Easy
+;; core-seqs
+;; Map is one of the core elements of a functional programming language. Given a function f and an input sequence s, return a lazy sequence of (f x) for each element x in s.
+(defn my-map [f xs]
+  (if (empty? xs) '()
+    (lazy-seq (cons (f (first xs)) (my-map f (rest xs))))))
+(deftest test-118
+  (testing "Re-implement Map"
+    (is (= [3 4 5 6 7] (my-map inc [2 3 4 5 6])))
+    (is (= (repeat 10 nil) (my-map (fn [my-map] nil) (range 10))))
+    (is (= [1000000 1000001]
+           (->> (my-map inc (range))
+                (drop (dec 1000000))
+                (take 2))))))
+
 ;; 120
 ;; Easy
 ;; math

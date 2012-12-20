@@ -1,4 +1,5 @@
-(ns four-cljr.core)
+(ns four-cljr.core
+  (:use clojure.set))
 
 (defn foo
   "I don't do a whole lot."
@@ -101,3 +102,61 @@
   (apply merge         
          (for [x m y (second x)]
            {[(first x) (first y)] (second y)})))
+
+
+;; Clojures polymoric protocols
+
+(defprotocol Concatable
+  (cat [this other]))
+
+(extend-type String
+  Concatable
+  (cat [this other]
+       (.concat this other)))
+
+(cat "House of " "leaves")
+
+(extend-type java.util.List
+  Concatable
+  (cat [this other]
+       (concat this other)))
+
+(extend-type java.util.Map
+  Concatable
+  (cat [this other]
+       (concat this other)))
+
+;;(cat '(1 2 3) '(4 5 6))
+
+;;(cat [1 2 3] [4 5 6])
+
+;;(cat {:a 1 :b 2} {:c 3 :d 4})
+
+;; using block level encapsulation
+(letfn [(say-hello 
+         [#^String name]
+         (str "Hello " name))]
+  (defn say-bye 
+    [#^String name]
+    (str (say-hello name) " Bye " name)))
+
+(say-bye "Jitendra")
+
+;; (say-hello "Jitendra") // not available as it is block level encapsulation
+
+;; local encapsulation using let form
+
+(let [a 10 b 20]
+  (* a b))
+
+;;(* a b) // not available, local encapsulation
+
+
+(defn pair
+  [sq]
+  (loop [s sq r false]
+    (if (or r (= (count s) 1))
+      r
+      (recur (rest s) (empty? (clojure.set/intersection 
+                                (first s) 
+                                (second s)))))))

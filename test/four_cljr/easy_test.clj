@@ -2,6 +2,8 @@
   (:use clojure.test)
   (:require clojure.set))
 
+;; Easy Type of problems
+
 ;; 19
 ;; Easy
 ;; seqs core-functions

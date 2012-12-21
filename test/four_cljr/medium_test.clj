@@ -105,3 +105,21 @@
     (is (= (distinct-items [:a :a :b :b :c :c]) [:a :b :c]))
     (is (= (distinct-items '([2 4] [1 2] [1 3] [1 3])) '([2 4] [1 2] [1 3])))
     (is (= (distinct-items (range 50)) (range 50)))))
+
+;; 80
+;; Medium
+;; Perfect Numbers
+;; A number is "perfect" if the sum of its divisors equal the number itself. 6 is a perfect number because 1+2+3=6. Write a function which returns true for perfect numbers and false otherwise. 
+(defn perfect-number
+  "Perfect Number"
+  [n]
+  (= n (reduce + 
+               (filter #(zero? (mod n %))
+                       (range 1 n)))))
+(deftest test-80
+  (testing "Perfect Number"
+    (is (= (perfect-number 6) true))
+	(= (perfect-number 7) false)
+	(= (perfect-number 496) true)
+  	(= (perfect-number 500) false)
+  	(= (perfect-number 8128) true)))

@@ -106,6 +106,31 @@
     (is (= (distinct-items '([2 4] [1 2] [1 3] [1 3])) '([2 4] [1 2] [1 3])))
     (is (= (distinct-items (range 50)) (range 50)))))
 
+;; 67
+;; Medium
+;; Prime Numbers
+;; Write a function which returns the first x number of prime numbers.
+(defn prime-number? 
+  [n]
+  (if (= n 1)
+    false
+    (loop [i 2
+           prime? true]
+      (if (or (= i n) (not prime?))
+        prime?
+        (recur (inc i) (not (zero? (mod n i))))))))
+
+(defn prime-numbers
+  [x]
+  (take x (filter prime-number? (range))))
+
+(deftest test-67
+  (testing "Prime Numbers"
+    (is (= (prime-numbers 2) [2 3]))
+    (is (= (prime-numbers 5) [2 3 5 7 11]))
+    (is (= (last (prime-numbers 100)) 541))))
+
+
 ;; 80
 ;; Medium
 ;; Perfect Numbers

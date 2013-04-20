@@ -130,6 +130,25 @@
     (is (= (prime-numbers 5) [2 3 5 7 11]))
     (is (= (last (prime-numbers 100)) 541))))
 
+;; 70
+;; Medium
+;; Word Sorting
+;; sorting
+;; Write a function that splits a sentence up into a sorted list of words. Capitalization should not affect sort order and punctuation should be ignored.
+(defn sort-word
+  [str]
+  (sort-by clojure.string/upper-case       
+           (clojure.string/split (clojure.string/replace str #"\.|\!" "") #"\ ")))
+
+(deftest test-70
+  (testing "Word Sorting"
+    (is (= (sort-word  "Have a nice day.")
+           ["a" "day" "Have" "nice"]))
+    (is (= (sort-word  "Clojure is a fun language!")
+           ["a" "Clojure" "fun" "is" "language"]))
+    (is (= (sort-word  "Fools fall for foolish follies.")
+           ["fall" "follies" "foolish" "Fools" "for"]))))
+
 ;; 77
 ;; Medium
 ;; Anagram Finder

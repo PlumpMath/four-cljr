@@ -149,6 +149,26 @@
     (is (= (sort-word  "Fools fall for foolish follies.")
            ["fall" "follies" "foolish" "Fools" "for"]))))
 
+;; 74
+;; Medium
+;; Filter perfect square
+;; Given a string of comma separated integers, write a function which returns a new comma separated string that only contains the numbers which are perfect squares.
+(defn perfect-square?
+  [s]
+  (let [inum (Integer/valueOf s)
+        sqr (int (Math/sqrt inum))]
+    (= (* sqr sqr) inum)))
+
+(defn perfect-squares
+  [s]
+  (reduce #(str %1 "," %2)  
+          (filter perfect-square? (clojure.string/split s #"\,"))))
+
+(deftest test-74
+  (testing "Filter perfect square"
+    (is (= (perfect-squares "4,5,6,7,8,9") "4,9"))
+    (is (= (perfect-squares "15,16,25,36,37") "16,25,36"))))
+
 ;; 77
 ;; Medium
 ;; Anagram Finder

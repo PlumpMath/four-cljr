@@ -198,8 +198,38 @@
                        (range 1 n)))))
 (deftest test-80
   (testing "Perfect Number"
-    (is (= (perfect-number 6) true))
-	(= (perfect-number 7) false)
-	(= (perfect-number 496) true)
-  	(= (perfect-number 500) false)
-  	(= (perfect-number 8128) true)))
+    (= (perfect-number 6) true)
+    (= (perfect-number 7) false)
+    (= (perfect-number 496) true)
+    (= (perfect-number 500) false)
+    (= (perfect-number 8128) true)))
+
+;; 105
+;; Medium
+;; map seqs
+;; Given an input sequence of keywords and numbers, create a map such that each key in the map is a keyword, and the value is a sequence of all the numbers (if any) between it and the next keyword in the sequence.
+
+(defn map-seqs 
+  [xs]
+  (loop [s xs
+         r {}
+         k (let [a (first s)]
+             (if (keyword? a) a nil))]
+    (if (empty? s)
+      r
+      (recur (rest s) 
+             (let [f (first s)]
+               (if (keyword? f)
+                 (assoc r f [])
+                 (assoc r k (conj (k r) f))))
+             (let [f (first s)]
+               (if (keyword? f)
+                 f
+                 k))))))
+
+(deftest test-105
+  (testing "Identify keys and values"
+    (= {} (map-seqs []))
+    (= {:a [1]} (map-seqs [:a 1]))
+    (= {:a [1], :b [2]} (map-seqs [:a 1, :b 2]))
+    (= {:a [1 2 3], :b [], :c [4]} (map-seqs [:a 1 2 3 :b :c 4]))))

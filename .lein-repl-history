@@ -31,3 +31,4 @@ bye
 (sort (clojure.string/split "Have a nice Day." #"\ "))
 (bye
 )
+(into [] {:a [1] :b [2]})

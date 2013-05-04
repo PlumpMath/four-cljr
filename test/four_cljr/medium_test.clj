@@ -93,7 +93,7 @@
                (lazy-seq
                 ((fn [[f :as xs] seen]
                    (when-let [s (seq xs)]
-                     (if (contains? seen f) 
+                     (if (contains? seen f)
                        (recur (rest s) seen)
                        (cons f (step (rest s) (conj seen f))))))
                  xs seen)))]
@@ -106,11 +106,33 @@
     (is (= (distinct-items '([2 4] [1 2] [1 3] [1 3])) '([2 4] [1 2] [1 3])))
     (is (= (distinct-items (range 50)) (range 50)))))
 
+;; 58
+;; Medium
+;; higner-order-functions core-functions
+;; Write a function which allows you to create function compositions. The parameter list should take a variable number of functions, and create a function applies them from right-to-left.
+(defn my-comp
+  [& fns]
+  (fn [x & more]
+    (let [rfns (reverse fns)
+          ffn (first rfns)
+          fr (apply ffn (list* x more))]
+      (loop [f (rest rfns)
+             r fr]
+        (if (empty? f)
+          r
+          (recur (rest f) ((first f) r)))))))
+(deftest test-58
+  (testing "Functon Composition"
+    (= [3 2 1] ((my-comp rest reverse) [1 2 3 4]))
+    (= 5 ((my-comp (partial + 3) second) [1 2 3 4]))
+    (= true ((my-comp zero? #(mod % 8) +) 3 5 7 9))
+    (= "HELLO" ((my-comp #(.toUpperCase %) #(apply str %) take) 5 "hello world"))))
+
 ;; 67
 ;; Medium
 ;; Prime Numbers
 ;; Write a function which returns the first x number of prime numbers.
-(defn prime-number? 
+(defn prime-number?
   [n]
   (if (= n 1)
     false
@@ -137,7 +159,7 @@
 ;; Write a function that splits a sentence up into a sorted list of words. Capitalization should not affect sort order and punctuation should be ignored.
 (defn sort-word
   [str]
-  (sort-by clojure.string/upper-case       
+  (sort-by clojure.string/upper-case
            (clojure.string/split (clojure.string/replace str #"\.|\!" "") #"\ ")))
 
 (deftest test-70
@@ -161,7 +183,7 @@
 
 (defn perfect-squares
   [s]
-  (reduce #(str %1 "," %2)  
+  (reduce #(str %1 "," %2)
           (filter perfect-square? (clojure.string/split s #"\,"))))
 
 (deftest test-74
@@ -175,8 +197,8 @@
 ;; Write a function which finds all the anagrams in a vector of words. A word x is an anagram of word y if all the letters in x can be rearranged in a different order to form y. Your function should return a set of sets, where each sub-set is a group of words which are anagrams of each other. Each sub-set should have at least two words. Words without any anagrams should not be included in the result.
 (defn anagram-finder
   [xs]
-  (set (filter #(> (count %) 1) 
-               (map set (vals (group-by (fn [s] 
+  (set (filter #(> (count %) 1)
+               (map set (vals (group-by (fn [s]
                                           (sort (seq s)))
                                         xs))))))
 (deftest test-77
@@ -189,11 +211,11 @@
 ;; 80
 ;; Medium
 ;; Perfect Numbers
-;; A number is "perfect" if the sum of its divisors equal the number itself. 6 is a perfect number because 1+2+3=6. Write a function which returns true for perfect numbers and false otherwise. 
+;; A number is "perfect" if the sum of its divisors equal the number itself. 6 is a perfect number because 1+2+3=6. Write a function which returns true for perfect numbers and false otherwise.
 (defn perfect-number
   "Perfect Number"
   [n]
-  (= n (reduce + 
+  (= n (reduce +
                (filter #(zero? (mod n %))
                        (range 1 n)))))
 (deftest test-80
@@ -209,7 +231,7 @@
 ;; map seqs
 ;; Given an input sequence of keywords and numbers, create a map such that each key in the map is a keyword, and the value is a sequence of all the numbers (if any) between it and the next keyword in the sequence.
 
-(defn map-seqs 
+(defn map-seqs
   [xs]
   (loop [s xs
          r {}
@@ -217,7 +239,7 @@
              (if (keyword? a) a nil))]
     (if (empty? s)
       r
-      (recur (rest s) 
+      (recur (rest s)
              (let [f (first s)]
                (if (keyword? f)
                  (assoc r f [])

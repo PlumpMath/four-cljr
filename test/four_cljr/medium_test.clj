@@ -226,6 +226,29 @@
     (= (perfect-number 500) false)
     (= (perfect-number 8128) true)))
 
+;; 86
+;; Medium
+;; math
+;; Happy numbers are positive integers that follow a particular formula: take each individual digit, square it, and then sum the squares to get a new number. Repeat with the new number and eventually, you might get to a number whose squared sum is 1. This is a happy number. An unhappy number (or sad number) is one that loops endlessly. Write a function that determines if a number is happy or not.
+(defn happy-number
+  ([n] (happy-number n #{}))
+  ([n s]
+   (let [hn (clojure.walk/walk
+             #(let [x (Integer/valueOf (str %))]
+                (* x x))
+             #(apply + %)
+             (seq (str n)))]
+     (cond (= hn 1) true
+           (contains? s hn) false
+           :else (recur hn (conj s hn))))))
+
+(deftest test-86
+  (testing "Happy numbers"
+    (= (happy-number 7) true)
+    (= (happy-number 986543210) true)
+    (= (happy-number 2) false)
+    (= (happy-number 3) false)))
+
 ;; 105
 ;; Medium
 ;; map seqs

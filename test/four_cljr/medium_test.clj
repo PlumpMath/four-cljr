@@ -309,3 +309,24 @@
           (filter #(zero? (bit-and % (dec %))) (range))
           (iterate inc 20)))))
 
+;; 116
+;; Medium
+;; math
+;; A balanced prime is a prime number which is also the mean of the primes directly before and after it in the sequence of valid primes. Create a function which takes an integer n, and returns true if it is a balanced prime.
+
+(defn prime-sandwich
+  [pn]
+  (cond (< pn 3) false
+        (prime-number? pn)
+        (let [pns (filter prime-number? (range))
+              i (.indexOf pns pn)
+              ppn (nth pns (dec i))
+              npn (nth pns (inc i))]
+          (= (/ (+ ppn npn) 2) pn))
+        :else false))
+
+(deftest test-116
+  (testing "Prime Sandwich"
+    (= false (prime-sandwich 4))
+    (= true (prime-sandwich 563))
+    (= 1103 (nth (filter prime-sandwich (range)) 15))))

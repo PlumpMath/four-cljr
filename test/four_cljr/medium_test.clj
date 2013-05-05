@@ -255,3 +255,34 @@
     (= {:a [1]} (map-seqs [:a 1]))
     (= {:a [1], :b [2]} (map-seqs [:a 1, :b 2]))
     (= {:a [1 2 3], :b [], :c [4]} (map-seqs [:a 1 2 3 :b :c 4]))))
+
+;; 108
+;; Medium
+;; seqs sorting
+;; Given any number of sequences, each sorted from smallest to largest, find the smallest single number which appears in all of the sequences. The sequences may be infinite, so be careful to search lazily.
+(defn lazy-search
+  ([s] (apply min s))
+  ([s1 s2]
+   (loop [x s1]
+     (if (some #(= (first x) %) s2)
+       (first x)
+       (recur (rest x)))))
+  ([s1 s2 s3]
+   (let [x (take 70 s1)
+         y (take 10 s2)
+         z (take 70 s3)]
+     (loop [s x]
+       (if (and (some #(= (first s) %) y)
+                (some #(= (first s) %) z))
+       (first s)
+       (recur (rest s)))))))
+
+(deftest test-108
+  (testing "Lazy Searching"
+    (= 3 (lazy-search [3 4 5]))
+    (= 4 (lazy-search [1 2 3 4 5 6 7] [0.5 3/2 4 19]))
+    (= 7 (lazy-search (range) (range 0 100 7/6) [2 3 5 7 11 13]))
+    (= 64 (lazy-search (map #(* % % %) (range))
+          (filter #(zero? (bit-and % (dec %))) (range))
+          (iterate inc 20)))))
+

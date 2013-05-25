@@ -330,6 +330,37 @@
           (filter #(zero? (bit-and % (dec %))) (range))
           (iterate inc 20)))))
 
+;; 115
+;; Medium
+;; math
+;; A balanced number is one whose componenet digits have the same sum on the left and right halves of the number. Write a function which accepts an integer n and returns true iff n is balanced.
+(defn is-balance?
+  [n]
+  (let [s (str n)
+        l (.length s)
+        q (quot l 2)]
+    (cond (= l 1) true
+          :else (let [xs (split-at q (into [] s))
+                          ls (first xs)
+                          rs (if (even? l)
+                               (second xs)
+                               (rest (second xs)))]
+                      (= (reduce + (map #(Integer/valueOf (str %)) (into [] ls)))
+                         (reduce + (map #(Integer/valueOf (str %)) (into [] rs))))))))
+
+(deftest test-115
+  (testing "The Balance Of N"
+    (= true (is-balance? 11))
+    (= true (is-balance? 121))
+    (= false (is-balance? 123))
+    (= true (is-balance? 0))
+    (= false (is-balance? 88099))
+    (= true (is-balance? 89098))
+    (= true (is-balance? 89089))
+    (= (take 20 (filter is-balance? (range)))
+       [0 1 2 3 4 5 6 7 8 9 11 22 33 44 55 66 77 88 99 101])))
+
+
 ;; 116
 ;; Medium
 ;; math

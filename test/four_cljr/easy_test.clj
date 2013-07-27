@@ -40,7 +40,7 @@
               (first (drop index coll))) '(4 5 6 7) 2) 6))
     (is (= ((fn get-nth
               [coll index]
-              (first (drop index coll))) [:a :b :c] 0) :a))	
+              (first (drop index coll))) [:a :b :c] 0) :a))
     (is (= ((fn get-nth
               [coll index]
               (first (drop index coll))) [1 2 3 4] 1) 2))
@@ -65,7 +65,7 @@
 ;; seqs core-functions
 ;; Write a function which reverses a sequence.
 ;; Special Restrictions: reverse rseq
-(defn reverse-seq 
+(defn reverse-seq
   [c1]
   (loop [lc1 c1 rc '()]
     (if (empty? lc1)
@@ -74,7 +74,7 @@
 
 (deftest test-23
   (testing "Reverse a Sequence"
-    (is (= (reverse-seq [1 2 3 4 5]) [5 4 3 2 1]))	
+    (is (= (reverse-seq [1 2 3 4 5]) [5 4 3 2 1]))
     (is (= (reverse-seq (sorted-set 5 7 2 7)) '(7 5 2)))
     (is (= (reverse-seq [[1 2][3 4][5 6]]) [[5 6][3 4][1 2]]))))
 
@@ -111,8 +111,8 @@
 
 (deftest test-26
   (testing "Fibonacci Sequence"
-    (is (= (#(take % (fib 1 1)) 3) '(1 1 2)))	
-    (is (= (#(take % (fib 1 1)) 6) '(1 1 2 3 5 8)))	
+    (is (= (#(take % (fib 1 1)) 3) '(1 1 2)))
+    (is (= (#(take % (fib 1 1)) 6) '(1 1 2 3 5 8)))
     (is (= (#(take % (fib 1 1)) 8) '(1 1 2 3 5 8 13 21)))))
 
 ;; 27
@@ -138,7 +138,7 @@
   (filter (complement sequential?) (rest (tree-seq sequential? seq x))))
 (deftest test-28
   (testing "Flatten a Sequence"
-    (is (= (flatten-me '((1 2) 3 [4 [5 6]])) '(1 2 3 4 5 6)))	
+    (is (= (flatten-me '((1 2) 3 [4 [5 6]])) '(1 2 3 4 5 6)))
     (is (= (flatten-me ["a" ["b"] "c"]) '("a" "b" "c")))
     (is (= (flatten-me '((((:a))))) '(:a)))))
 
@@ -167,7 +167,7 @@
                 rcoll (conj rcoll (first coll)))))))
 (deftest test-30
   (testing "Compress a Sequence"
-    (is (= (apply str (#(compress-seq %) "Leeeeeerrroyyy")) "Leroy"))	
+    (is (= (apply str (#(compress-seq %) "Leeeeeerrroyyy")) "Leroy"))
     (is (= (#(compress-seq %) [1 1 2 3 3 2 2 3]) '(1 2 3 2 3)))
     (is (= (#(compress-seq %) [[1 2] [1 2] [3 4] [1 2]]) '([1 2] [3 4] [1 2])))))
 
@@ -201,8 +201,8 @@
 (deftest test-32
   (testing "Duplicate a Sequence"
     (is (= (duplicate-seq [1 2 3]) '(1 1 2 2 3 3)))
-    (is (= (duplicate-seq [:a :a :b :b]) '(:a :a :a :a :b :b :b :b)))	
-    (is (= (duplicate-seq [[1 2] [3 4]]) '([1 2] [1 2] [3 4] [3 4])))	
+    (is (= (duplicate-seq [:a :a :b :b]) '(:a :a :a :a :b :b :b :b)))
+    (is (= (duplicate-seq [[1 2] [3 4]]) '([1 2] [1 2] [3 4] [3 4])))
     (is (= (duplicate-seq [[1 2] [3 4]]) '([1 2] [1 2] [3 4] [3 4])))))
 
 ;; 33
@@ -237,10 +237,10 @@
 ;; Write a function which takes a variable number of parameter and returns the maximum value.
 ;; Special Restrictions; max max-key
 (defn find-max
-  [& args] 
-  (loop [col (rest args) mx (first args)] 
-    (if (empty? col) 
-      mx 
+  [& args]
+  (loop [col (rest args) mx (first args)]
+    (if (empty? col)
+      mx
       (recur (rest col)
              (if (> (first col) mx) (first col) mx)))))
 (deftest test-38
@@ -254,7 +254,7 @@
 ;; seqs core-functions
 ;; Write a function which takes two sequences and returns the first item from each , then the second item from each, then the third, etc.
 ;; Special Restrictions: interleave
-(defn interleave-seq 
+(defn interleave-seq
   [c1 c2]
   (loop [lc1 c1 lc2 c2 rc '()]
     (if (or (empty? lc1) (empty? lc2))
@@ -344,8 +344,8 @@
 ;; seqs core-functions
 ;; Special Restrictions: split-at
 ;; Write a function which will split a sequence into two parts.
-(defn split-seq 
-  [n xs] 
+(defn split-seq
+  [n xs]
   [(take n xs) (drop n xs)])
 (deftest test-49
   (testing "Split a sequence"
@@ -527,6 +527,35 @@
     (is (= (binary-tree? [1 [2 [3 [4 false nil] nil] nil] nil]) false))
     (is (= (binary-tree? '(:a nil ())) false))))
 
+;; 96
+;; Easy
+;; trees
+;; Let us define a binary tree as "symmetric" if the left half of the tree is the mirror image of the right half of the tree. Write a predicate to determine whether or not a given binary tree is symmetric. (see To Tree, or not to Tree for a reminder on the tree representation we're using).
+
+(defn btree-symmetric?
+  [btree]
+  (letfn [(mirror-equals [left right]
+                         (if (or (nil? left) (nil? right))
+                           (and (= left nil) (= right nil))
+                           (and (= (first left) (first right))
+                                (mirror-equals (second left) (nth right 2))
+                                (mirror-equals (nth left 2) (second right)))))]
+    (mirror-equals (nth btree 1) (nth btree 2))))
+
+(deftest test-96
+  (testing "Beauty is Symmetry"
+    (is (= (btree-symmetric? '(:a (:b nil nil) (:b nil nil))) true))
+    (is (= (btree-symmetric? '(:a (:b nil nil) nil)) false))
+    (is (= (btree-symmetric? '(:a (:b nil nil) (:c nil nil))) false))
+    (is (= (btree-symmetric? [1 [2 nil [3 [4 [5 nil nil] [6 nil nil]] nil]]
+                              [2 [3 nil [4 [6 nil nil] [5 nil nil]]] nil]])
+           true))
+    (is (= (btree-symmetric? [1 [2 nil [3 [4 [5 nil nil] [6 nil nil]] nil]]
+                              [2 [3 nil [4 [5 nil nil] [6 nil nil]]] nil]])
+           false))
+    (is (= (btree-symmetric? [1 [2 nil [3 [4 [5 nil nil] [6 nil nil]] nil]]
+                              [2 [3 nil [4 [6 nil nil] nil]] nil]])
+           false))))
 
 ;; 97
 ;; Easy
@@ -599,7 +628,7 @@
 (deftest test-107
   (testing "Simple closures"
     (is (= 256 ((simple-closure 2) 16) ((simple-closure 8) 2)))
-    (is (= [1 8 27 64] (map (simple-closure 3) [1 2 3 4])))      
+    (is (= [1 8 27 64] (map (simple-closure 3) [1 2 3 4])))
     (is (= [1 2 4 8 16] (map #((simple-closure %) 2) [0 1 2 3 4])))))
 
 ;; 118
@@ -715,7 +744,7 @@
 ;; 1 That is, (get-in original [k1 k2]) should be the same as (get result [k1 k2])
 (defn tree-into-tables
   [m]
-  (apply merge         
+  (apply merge
          (for [x m y (second x)]
            {[(first x) (first y)] (second y)})))
 (deftest test-146
@@ -738,8 +767,8 @@
 ;; Write a function that, for any given input vector of numbers, returns an infinite lazy sequence of vectors, where each next one is constructed from the previous following the rules used in Pascal's Triangle. For example, for [3 1 2], the next row is [3 4 3 2].
 (defn pascal-trapezoid
   [n]
-  (lazy-seq 
-   (cons n 
+  (lazy-seq
+   (cons n
          (pascal-trapezoid
           (let [a (conj n 0)
             b (vec (cons 0 n))]
@@ -776,5 +805,5 @@
     (is (= 3
            (let [[f a] [+ (range 3)]] (apply f a))
            (let [[[f a] b] [[+ 1] 2]] (f a b))
-           (let [[f a] [inc 2]] (f a)))))) 
+           (let [[f a] [inc 2]] (f a))))))
 

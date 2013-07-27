@@ -780,6 +780,68 @@
 	(is (= (take 2 (pascal-trapezoid [3 1 2])) [[3 1 2] [3 4 3 2]]))
 	(is (= (take 100 (pascal-trapezoid [2 4 2])) (rest (take 101 (pascal-trapezoid [2 2])))))))
 
+;; 153
+;;
+(defn pairwise-set?
+  ([s]
+   (loop [xs s
+          found false]
+     (if (or found (empty? xs))
+       found
+       (recur (rest xs) (pairwise-set? (first xs) xs)))))
+  ([f s]
+   (loop [xs (rest s)
+          found false]
+     (if (or found (empty? xs))
+       found
+       (recur (rest xs) (empty? (clojure.set/intersection f (first xs))))))))
+
+(defn pairwise-disjoint?
+  [s]
+  (apply distinct? (mapcat seq s)))
+
+(deftest test-153
+  (testing "Pairwise Disjoint Sets"
+    (is (= (pairwise-disjoint? #{#{\U} #{\s} #{\e \R \E} #{\P \L} #{\.}})
+           true))
+    (is (= (pairwise-disjoint? #{#{:a :b :c :d :e}
+                                 #{:a :b :c :d}
+                                 #{:a :b :c}
+                                 #{:a :b}
+                                 #{:a}})
+           false))
+    (is (= (pairwise-disjoint? #{#{[1 2 3] [4 5]}
+                                 #{[1 2] [3 4 5]}
+                                 #{[1] [2] 3 4 5}
+                                 #{1 2 [3 4] [5]}})
+           true))
+    (is (= (pairwise-disjoint? #{#{'a 'b}
+                                 #{'c 'd 'e}
+                                 #{'f 'g 'h 'i}
+                                 #{''a ''c ''f}})
+           true))
+    (is (= (pairwise-disjoint? #{#{'(:x :y :z) '(:x :y) '(:z) '()}
+                                 #{#{:x :y :z} #{:x :y} #{:z} #{}}
+                                 #{'[:x :y :z] [:x :y] [:z] [] {}}})
+           false))
+    (is (= (pairwise-disjoint? #{#{(= "true") false}
+                                 #{:yes :no}
+                                 #{(class 1) 0}
+                                 #{(symbol "true") 'false}
+                                 #{(keyword "yes") ::no}
+                                 #{(class '1) (int \0)}})
+           false))
+    (is (= (pairwise-disjoint? #{#{distinct?}
+                                 #{#(-> %) #(-> %)}
+                                 #{#(-> %) #(-> %) #(-> %)}
+                                 #{#(-> %) #(-> %) #(-> %)}})
+           true))
+    (is (= (pairwise-disjoint? #{#{(#(-> *)) + (quote mapcat) #_ nil}
+                                 #{'+ '* mapcat (comment mapcat)}
+                                 #{(do) set contains? nil?}
+                                 #{, , , #_, , empty?}})
+           false))))
+
 ;; 157
 ;; Easy
 ;; seqs

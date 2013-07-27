@@ -128,6 +128,21 @@
     (= true ((my-comp zero? #(mod % 8) +) 3 5 7 9))
     (= "HELLO" ((my-comp #(.toUpperCase %) #(apply str %) take) 5 "hello world"))))
 
+;; 59
+;; Medium
+;; higher-order-functions core-functions
+;; Take a set of functions and return a new function that takes a variable number of arguments and returns a sequence containing the result of applying each function left-to-right to the argument list.
+(defn juxta-position
+  [& fns]
+  (fn [& args]
+    (map #(apply % args) fns)))
+
+(deftest test-59
+  (testing "Juxtaposition"
+    (is (= [21 6 1] ((juxta-position + max min) 2 3 5 1 6 4)))
+    (is (= ["HELLO" 5] ((juxta-position #(.toUpperCase %) count) "hello")))
+    (is (= [2 6 4] ((juxta-position :a :c :b) {:a 2, :b 4, :c 6, :d 8 :e 10})))))
+
 ;; 65
 ;; Medium
 ;; seqs testing

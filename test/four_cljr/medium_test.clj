@@ -331,6 +331,31 @@
     (is (= (anagram-finder ["veer" "lake" "item" "kale" "mite" "ever"])
            #{#{"veer" "ever"} #{"lake" "kale"} #{"mite" "item"}}))))
 
+;; 78
+;; Medium
+;; core-functions
+;; Reimplement the function described in "Intro to Trampoline".
+;; Special Restrictions - trampoline
+
+(defn my-trampoline
+  [f & args]
+  (loop [res (apply f args)]
+    (if (fn? res)
+      (recur (res))
+      res)))
+
+(deftest test-78
+  (testing "Reimplement Trampoline"
+    (is (= (letfn [(triple [x] #(sub-two (* 3 x)))
+                   (sub-two [x] #(stop?(- x 2)))
+                   (stop? [x] (if (> x 50) x #(triple x)))]
+             (my-trampoline triple 2))
+           82))
+    (is (= (letfn [(my-even? [x] (if (zero? x) true #(my-odd? (dec x))))
+                   (my-odd? [x] (if (zero? x) false #(my-even? (dec x))))]
+             (map (partial my-trampoline my-even?) (range 6)))
+           [true false true false true false]))))
+
 ;; 80
 ;; Medium
 ;; Perfect Numbers

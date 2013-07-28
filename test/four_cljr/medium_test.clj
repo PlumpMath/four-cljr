@@ -159,6 +159,29 @@
     (is (= ["HELLO" 5] ((juxta-position #(.toUpperCase %) count) "hello")))
     (is (= [2 6 4] ((juxta-position :a :c :b) {:a 2, :b 4, :c 6, :d 8 :e 10})))))
 
+;; 60
+;; Medium
+;; seqs core functions
+;; Write a function which behaves like reduce, but returns each intermediate value of the reduction. Your function must accept either two or three arguments, and the return sequence must be lazy.
+;; Special Restrictions - reductions
+
+(defn my-reductions
+  ([f coll]
+   (lazy-seq
+    (if-let [s (seq coll)]
+      (my-reductions f (first s) (rest s))
+      (list (f)))))
+  ([f init coll]
+   (cons init
+         (lazy-seq
+          (when-let [s (seq coll)]
+            (my-reductions f (f init (first s)) (rest s)))))))
+(deftest test-60
+  (testing "Sequence Reductions"
+    (is (= (take 5 (my-reductions + (range))) [0 1 3 6 10]))
+    (is (= (my-reductions conj [1] [2 3 4]) [[1] [1 2] [1 2 3] [1 2 3 4]]))
+    (is (= (last (my-reductions * 2 [3 4 5])) (reduce * 2 [3 4 5]) 120))))
+
 ;; 65
 ;; Medium
 ;; seqs testing
@@ -204,6 +227,39 @@
     (is (= (prime-numbers 5) [2 3 5 7 11]))
     (is (= (last (prime-numbers 100)) 541))))
 
+;; 69
+;; Medium
+;; core-functions
+;; Write a function which takes a function f and a variable number of maps. Your function should return a map that consists of the rest of the maps conj-ed onto the first. If a key occurs in more than one map, the mapping(s) from the latter (left-to-right) should be combined with the mapping in the result by calling (f val-in-result val-in-latter)
+;; Special Restrictions - merge-with
+
+(defn my-merge-with
+  [f m & maps]
+  (if (empty? maps)
+    m
+    (recur f
+           (let [m2 (first maps)]
+             (loop [m1 m
+                    ks (keys m2)]
+               (if (empty? ks)
+                 m1
+                 (recur (let [k (first ks)
+                              v (get m2 k)]
+                          (if (contains? m1 (first ks))
+                            (assoc m1 k (f (get m1 k) v))
+                            (assoc m1 k v)))
+                          (rest ks)))))
+           (rest maps))))
+
+(deftest test-69
+  (testing "Merge with Function"
+    (is (= (my-merge-with * {:a 2, :b 3, :c 4} {:a 2} {:b 2} {:c 5})
+           {:a 4, :b 6, :c 20}))
+    (is (= (my-merge-with - {1 10, 2 20} {1 3, 2 10, 3 15})
+           {1 7, 2 10, 3 15}))
+    (is (= (my-merge-with concat {:a [3], :b [6]} {:a [4 5], :c [8 9]} {:b [7]})
+           {:a [3 4 5], :b [6 7], :c [8 9]}))))
+
 ;; 70
 ;; Medium
 ;; Word Sorting
@@ -242,6 +298,21 @@
   (testing "Filter perfect square"
     (is (= (perfect-squares "4,5,6,7,8,9") "4,9"))
     (is (= (perfect-squares "15,16,25,36,37") "16,25,36"))))
+
+;; 76
+;; Medium
+;; recursion
+;; The trampoline function takes a function f and a variable number of parameters. Trampoline calls f with any parameters that were supplied. If f returns a function, trampoline calls that function with no arguments. This is repeated, until the return value is not a function, and then trampoline returns that non-function value. This is useful for implementing mutually recursive algorithms in a way that won't consume the stack.
+(deftest test-76
+  (testing "Into to Trampoline"
+    (is (= [1 3 5 7 9 11]
+           (letfn
+             [(foo [x y] #(bar (conj x y) y))
+              (bar [x y] (if (> (last x) 10)
+                           x
+                           #(foo x (+ 2 y))))]
+             (trampoline foo [] 1))))))
+
 
 ;; 77
 ;; Medium

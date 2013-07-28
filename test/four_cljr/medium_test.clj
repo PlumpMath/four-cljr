@@ -372,6 +372,23 @@
     (= (happy-number 2) false)
     (= (happy-number 3) false)))
 
+;; 102
+;; Medium
+;; strings
+;; When working with java, you often need to create an object with fieldsLikeThis, but you'd rather work with a hashmap that has :keys-like-this until it's time to convert. Write a function which takes lower-case hyphen-separated strings and converts them to camel-case strings.
+
+(defn intoCamelCase
+  [s]
+  (let [words (clojure.string/split s #"-")]
+    (str (first words)
+         (reduce str (map #(clojure.string/capitalize %) (rest words))))))
+
+(deftest test-102
+  (testing "Into Camel Case"
+    (is (= (intoCamelCase "something") "something"))
+    (is (= (intoCamelCase "multi-word-key") "multiWordKey"))
+    (is (= (intoCamelCase "leaveMeAlone") "leaveMeAlone"))))
+
 ;; 105
 ;; Medium
 ;; map seqs

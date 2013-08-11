@@ -573,6 +573,43 @@
     (= true (prime-sandwich 563))
     (= 1103 (nth (filter prime-sandwich (range)) 15))))
 
+;; 132
+;; Medium
+;; seqs core-functions
+;; Write a function that takes a two-argument predicate, a value, and a collection; and returns a new collection where the value is inserted between every two items that satisfy the predicate.
+
+(defn one-three-two
+  [op k s]
+  (if (empty? s)
+    s
+    (loop [xs s
+           r []]
+      (if (= 1 (count xs))
+        (conj r (first xs))
+        (recur (rest xs) (if (op (first xs) (second xs))
+                           (conj (conj r (first xs)) k)
+                           (conj r (first xs))))))))
+
+(defn fn-132
+  "Lazy-seq function"
+  [f sym s]
+  (letfn [(op [l s]
+              (cond (empty? s) '()
+                    (or (nil? l) (not (f l (first s))))
+                    (cons (first s) (lazy-seq (op (first s) (rest s))))
+                    true
+                    (cons sym
+                          (cons (first s) (lazy-seq
+                                           (op (first s) (rest s)))))))]
+    (op nil s)))
+
+(deftest test-132
+  (testing "Insert between two items"
+    (= '(1 :less 6 :less 7 4 3) (one-three-two < :less [1 6 7 4 3]))
+    (= '(2) (one-three-two > :more [2]))
+    (= [0 1 :x 2 :x 3 :x 4]  (one-three-two #(and (pos? %) (< % %2)) :x (range 5)))
+    (empty? (one-three-two > :more ()))))
+
 ;; 137
 ;; Medium
 ;; math

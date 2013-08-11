@@ -494,6 +494,32 @@
           (filter #(zero? (bit-and % (dec %))) (range))
           (iterate inc 20)))))
 
+;; 114
+;; Medium
+;; seqs higher-order-functions
+;; take-while is great for filtering sequences, but it limited: you can only examine a single item of the sequence at a time. What if you need to keep track of some state as you go over the sequence?
+;; Write a function which accepts an integer n, a predicate p, and a sequence. It should return a lazy sequence of items in the list up to, but not including, the nth item that satisfies the predicate.
+
+(defn one-one-four
+  [n p s]
+  (lazy-seq
+   (when-let [[c & r] (seq s)]
+     (let [m (if (p c) (dec n) n)]
+       (when (pos? m)
+         (cons c (one-one-four m p r)))))))
+
+(deftest test-114
+  (testing "Global take-while"
+    (= [2 3 5 7 11 13]
+       (one-one-four 4 #(= 2 (mod % 3))
+                     [2 3 5 7 11 13 17 19 23]))
+    (= ["this" "is" "a" "sentence"]
+       (one-one-four 3 #(some #{\i} %)
+                     ["this" "is" "a" "sentence" "i" "wrote"]))
+    (= ["this" "is"]
+       (one-one-four 1 #{"a"}
+                     ["this" "is" "a" "sentence" "i" "wrote"]))))
+
 ;; 115
 ;; Medium
 ;; math

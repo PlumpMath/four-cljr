@@ -631,3 +631,38 @@
     (is (= [1 0 0 1] (to-base 9 2)))
     (is (= [1 0] (let [n (rand-int 100000)](to-base n n))))
     (is (= [16 18 5 24 15 1] (to-base Integer/MAX_VALUE 42)))))
+
+;; 177
+;; Medium
+;; parsing
+;; When parsing a snippet of code it's often a good idea to do a sanity check to see if all the brackets match up. Write a function that takes in a string and returns truthy if all square [ ] round ( ) and curly { } brackets are properly paired and legally nested, or returns falsey otherwise.
+
+(defn problem-177
+  [s]
+  (let [ob #{"(" "[" "{"}
+        cb {"(" ")" "[" "]" "{" "}"}]
+    (loop [xs (re-seq #"[\(\)\[\]\{\}]" s)
+           sk []]
+      (if (empty? xs)
+        (if (empty? sk) true false)
+        (recur (rest xs)
+               (if (contains? ob (first xs))
+                 (conj sk (first xs))
+                 (if (= (get cb (peek sk)) (first xs))
+                   (pop sk)
+                   (conj sk (first xs)))))))))
+
+(deftest test-177
+  (testing "Balancing Brackets"
+    (problem-177 "This string has no brackets.")
+    (problem-177 "class Test {
+                 public static void main(String[] args) {
+                 System.out.println(\"Hello world.\");
+                 }
+                 }")
+    (not (problem-177 "(start, end]"))
+    (not (problem-177 "())"))
+    (not (problem-177 "[ { ] } "))
+    (problem-177 "([]([(()){()}(()(()))(([[]]({}()))())]((((()()))))))")
+    (not (problem-177 "([]([(()){()}(()(()))(([[]]({}([)))())]((((()()))))))"))
+    (not (problem-177 "["))))

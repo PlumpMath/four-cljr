@@ -4,6 +4,35 @@
 
 ;; Hard type of problems
 
+;; 92
+;; Hard
+;; string maths
+;; Roman numerals are easy to recognize, but not everyone knows all the rules necessary to work with them.
+;; Write a function to parse a Roman-numeral string and return the number it represents.
+
+;; You can assume that the input will be well-formed, in upper-case, and follow the subtractive principle.
+;; You don't need to handle any numbers greater than MMMCMXCIX (3999), the largest number representable
+;; with ordinary letters.
+
+(defn problem-92
+  [iroman]
+  (let [roman {\I 1 \V 5 \X 10 \L 50 \C 100 \D 500 \M 1000}]
+    (loop [s (map #(get roman %) (seq iroman))
+           r 0]
+      (if (= 1 (count s))
+        (+ r (first s))
+        (recur (rest s) (if (>= (first s)
+                                (second s))
+                          (+ r (first s))
+                          (- r (first s))))))))
+
+(deftest test-92
+  (testing "Read Roman numerals"
+    (= 14 (problem-92 "XIV"))
+    (= 827 (problem-92 "DCCCXXVII"))
+    (= 3999 (problem-92 "MMMCMXCIX"))
+    (= 48 (problem-92 "XLVIII"))))
+
 ;; 178
 ;; Hard
 ;; strings game

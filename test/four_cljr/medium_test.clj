@@ -434,6 +434,21 @@
     (is (= (intoCamelCase "multi-word-key") "multiWordKey"))
     (is (= (intoCamelCase "leaveMeAlone") "leaveMeAlone"))))
 
+;; 104
+;; Medium
+;;
+
+(defn problem-104
+  [n s]
+   (cond (> n 1000) (problem-104 (rem n 1000) (str s (reduce str (repeat (quot n 1000) "M"))))
+         (> n 500) (problem-104 (rem n 500) (str s (reduce str (repeat (quot n 500) "D"))))
+         (> n 100) (problem-104 (rem n 100) (str s (reduce str (repeat (quot n 100) "C"))))
+         (> n 50) (problem-104 (rem n 50) (str s (reduce str (repeat (quot n 50) "L"))))
+         (> n 10) (problem-104 (rem n 10) (str s (reduce str (repeat (quot n 10) "X"))))
+         (> n 5) (problem-104 (rem n 5) (str s (reduce str (repeat (quot n 5) "V"))))
+         (> n 0) (problem-104 (dec n) (str s "I"))
+         :else s))
+
 ;; 105
 ;; Medium
 ;; map seqs
@@ -494,11 +509,41 @@
           (filter #(zero? (bit-and % (dec %))) (range))
           (iterate inc 20)))))
 
-;; 114
+;; 110
 ;; Medium
-;; seqs higher-order-functions
-;; take-while is great for filtering sequences, but it limited: you can only examine a single item of the sequence at a time. What if you need to keep track of some state as you go over the sequence?
-;; Write a function which accepts an integer n, a predicate p, and a sequence. It should return a lazy sequence of items in the list up to, but not including, the nth item that satisfies the predicate.
+;; seqs - Sequence of pronounciation
+;; Write a function that returns a lazy sequence of "pronunciations" of a sequence of numbers.
+;; A pronunciation of each element in the sequence consists of the number of repeating identical 
+;; numbers and the number itself. For example, [1 1] is pronounced as [2 1] ("two ones"),
+;; which in turn is pronounced as [1 2 1 1] ("one two, one one").
+
+;; Your function should accept an initial sequence of numbers, and return an infinite lazy sequence 
+;; of pronunciations, each element being a pronunciation of the
+;; previous element. 
+
+(defn seq-pronunciations [x]
+  (lazy-seq
+   (let [next-coll (flatten (map #(vec [(count %) (first %)])
+                                 (partition-by identity x)))]
+     (cons next-coll (seq-pronunciations next-coll)))))
+
+(deftest test-110
+  (testing "Sequence of pronunciations"
+    (= [[1 1] [2 1] [1 2 1 1]] (take 3 (seq-pronunciations [1])))
+    (= [3 1 2 4] (first (seq-pronunciations [1 1 1 4 4])))
+    (= [1 1 1 3 2 1 3 2 1 1] (nth (seq-pronunciations [1]) 6))
+    (= 338 (count (nth (seq-pronunciations [3 2]) 15)))))
+
+
+  ;; 114
+  ;; Medium
+  ;; seqs higher-order-functions
+  ;; take-while is great for filtering sequences, but it limited: you can only examine a single itemof 
+  ;; the sequence at a time. What if you need to keep track of some state as you go over the sequence?
+  ;; Write a function which accepts an integer n, a predicate p, and a sequence. 
+  ;; It should return a lazy sequence of items in the list up to, but not including, 
+  ;; the nth item that satisfies the predicate.
+  
 
 (defn one-one-four
   [n p s]
